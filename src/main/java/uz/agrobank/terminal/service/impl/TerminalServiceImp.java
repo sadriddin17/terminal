@@ -5,12 +5,10 @@ import org.springframework.stereotype.Service;
 import uz.agrobank.terminal.service.TerminalService;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,60 +57,23 @@ public class TerminalServiceImp implements TerminalService {
             System.out.println("Exited with code " + exitCode);
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException("command.execution.failed");
         }
     }
 
-//    private String extractRRNFromLog() {
-//
-//        File logDirectory = new File(logDirectoryPath);
-//        File[] logFiles = logDirectory.listFiles();
-//
-//        // Check if logFiles is not null and has at least one file
-//        if (logFiles != null && logFiles.length > 0) {
-//            // Sort the files based on the last modified timestamp
-//            Arrays.sort(logFiles, Comparator.comparingLong(File::lastModified).reversed());
-//
-//            File lastLogFile = logFiles[0];
-//            System.out.println("Last log file: " + lastLogFile.getAbsolutePath());
-//
-//            // Use try-with-resources to automatically close the BufferedReader
-//            try (BufferedReader reader = new BufferedReader(new FileReader(lastLogFile))) {
-//                String lastRRN = reader.lines().reduce((first, second) -> second).orElse(null);
-//
-//                if (lastRRN != null) {
-//                    // Extract the RRN field using the appropriate logic
-//                    int startIndex = Math.max(0, lastRRN.length() - 10); // Assuming RRN is 10 characters wide
-//                    String rrnField = lastRRN.substring(startIndex);
-//                    System.out.println("Last RRN field: " + rrnField);
-//                    return rrnField;
-//                } else {
-//                    System.out.println("Log file is empty");
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//        } else {
-//            System.out.println("No log files found in the directory");
-//        }
-//
-//        return null;
-//    }
-
     private String extractRRNFromCheckout(){
         String checkoutData = readFromFile(checkoutFilePath);
-        String rrn = "";
+        String rrn;
 
         if (checkoutData != null) {
             rrn = extractRRN(checkoutData);
             if (rrn != null) {
                 System.out.println("Extracted RRN: " + rrn);
             } else {
-                System.out.println("RRN not found in the file.");
+                throw new RuntimeException("transaction.failed");
             }
         } else {
-            System.out.println("Failed to read data from the file.");
+            throw new RuntimeException("transaction.failed");
         }
         return rrn;
     }
@@ -126,7 +87,6 @@ public class TerminalServiceImp implements TerminalService {
             }
             return content.toString();
         } catch (IOException e) {
-            e.printStackTrace();
             return null;
         }
     }
