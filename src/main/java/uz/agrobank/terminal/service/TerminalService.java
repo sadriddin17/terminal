@@ -1,5 +1,6 @@
 package uz.agrobank.terminal.service;
 
 public interface TerminalService {
-    void purchase(Long amount);
+    String purchase(Long amount);
+    void cancelLast();
 }

@@ -1,5 +1,6 @@
 package uz.agrobank.terminal.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.agrobank.terminal.service.TerminalService;
 
@@ -14,7 +15,11 @@ public class Terminal {
     }
 
     @GetMapping("purchase")
-    public void purchase(@RequestParam Long amount){
-        terminalService.purchase(amount);
+    public ResponseEntity<String> purchase(@RequestParam Long amount){
+        return ResponseEntity.ok(terminalService.purchase(amount));
+    }
+    @GetMapping("cancel-last")
+    public void cancelLast(){
+        terminalService.cancelLast();
     }
 }
