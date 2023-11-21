@@ -3,4 +3,4 @@ terminal:
   exe:
     path: C:\Arcus2\CommandLineTool\bin\CommandLineTool.exe
   checkout-file:
-    path: C:\Arcus2\cheqq.out
+    path: C:\Arcus2\cheq.out

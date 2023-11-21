@@ -2,6 +2,7 @@ package uz.agrobank.terminal.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uz.agrobank.terminal.enums.TerminalType;
 import uz.agrobank.terminal.service.TerminalService;
 
 import java.io.BufferedReader;
@@ -23,7 +24,7 @@ public class TerminalServiceImp implements TerminalService {
     private String checkoutFilePath;
 
     @Override
-    public String purchase(Long amount) {
+    public String purchase(Long amount, TerminalType type) {
         String[] parameters = {"/o1", "/a".concat(String.valueOf(amount)), "/c000"};
 
         List<String> command = new ArrayList<>();
@@ -31,7 +32,7 @@ public class TerminalServiceImp implements TerminalService {
         command.addAll(Arrays.asList(parameters));
 
         execute(command);
-        return extractRRNFromCheckout();
+        return extractRRNFromCheckout(type);
     }
 
     @Override
@@ -61,12 +62,15 @@ public class TerminalServiceImp implements TerminalService {
         }
     }
 
-    private String extractRRNFromCheckout(){
+    private String extractRRNFromCheckout(TerminalType type){
         String checkoutData = readFromFile(checkoutFilePath);
         String rrn;
 
         if (checkoutData != null) {
-            rrn = extractRRN(checkoutData);
+            rrn = switch (type){
+                case HUMO -> extractHumoRRN(checkoutData);
+                case UZCARD -> extractUzcardRRN(checkoutData);
+            };
             if (rrn != null) {
                 System.out.println("Extracted RRN: " + rrn);
             } else {
@@ -91,9 +95,25 @@ public class TerminalServiceImp implements TerminalService {
         }
     }
 
-    private String extractRRN(String checkoutData) {
+    private String extractUzcardRRN(String checkoutData) {
         // Define a regex pattern to match the RRN line
         String regex = "RRN\\s+([0-9]+)";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(checkoutData);
+
+        // Find the first match
+        if (matcher.find()) {
+            // Group 1 contains the RRN value
+            return matcher.group(1);
+        } else {
+            // Return null if no match is found
+            return null;
+        }
+    }
+
+    private String extractHumoRRN(String checkoutData) {
+        // Define a regex pattern to match the RRN line
+        String regex = "RRN:\\s+([0-9]+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(checkoutData);
 
