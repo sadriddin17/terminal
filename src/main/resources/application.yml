@@ -4,4 +4,3 @@ terminal:
     path: C:\Arcus2\CommandLineTool\bin\CommandLineTool.exe
   checkout-file:
     path: C:\Arcus2\cheq.out
-  zone: Etc/GMT+5
