@@ -46,6 +46,17 @@ public class TerminalServiceImp implements TerminalService {
         execute(command);
     }
 
+    @Override
+    public void sendDailyDetails() {
+        String[] parameters = {"/o65"};
+
+        List<String> command = new ArrayList<>();
+        command.add(exePath);
+        command.addAll(Arrays.asList(parameters));
+
+        execute(command);
+    }
+
     private void execute(List<String> command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
