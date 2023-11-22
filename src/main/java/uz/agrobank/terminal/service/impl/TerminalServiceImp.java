@@ -69,6 +69,7 @@ public class TerminalServiceImp implements TerminalService {
             System.out.println("Exited with code " + exitCode);
 
         } catch (IOException | InterruptedException e) {
+            cancelLast();
             throw new RuntimeException("command.execution.failed");
         }
     }
@@ -85,9 +86,11 @@ public class TerminalServiceImp implements TerminalService {
             if (rrn != null) {
                 System.out.println("Extracted RRN: " + rrn);
             } else {
+                cancelLast();
                 throw new RuntimeException("transaction.failed");
             }
         } else {
+            cancelLast();
             throw new RuntimeException("transaction.failed");
         }
         return rrn;
@@ -108,7 +111,7 @@ public class TerminalServiceImp implements TerminalService {
 
     private String extractUzcardRRN(String checkoutData) {
         // Define a regex pattern to match the RRN line
-        String regex = "RRN\\s+([0-9]+)";
+        String regex = "RRN\\s+(\\d+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(checkoutData);
 
@@ -124,7 +127,7 @@ public class TerminalServiceImp implements TerminalService {
 
     private String extractHumoRRN(String checkoutData) {
         // Define a regex pattern to match the RRN line
-        String regex = "RRN:\\s+([0-9]+)";
+        String regex = "RRN:\\s+(\\d+)";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(checkoutData);
 

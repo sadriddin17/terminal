@@ -19,8 +19,8 @@ public class Terminal {
     public ResponseEntity<String> purchase(@RequestParam Long amount, TerminalType type){
         return ResponseEntity.ok(terminalService.purchase(amount, type));
     }
-//    @GetMapping("cancel-last")
-//    public void cancelLast(){
-//        terminalService.cancelLast();
-//    }
+    @GetMapping("cancel-last")
+    public void cancelLast(){
+        terminalService.cancelLast();
+    }
 }
