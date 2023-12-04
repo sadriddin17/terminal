@@ -2,6 +2,7 @@ package uz.agrobank.terminal.service.impl;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import uz.agrobank.terminal.dto.PurchaseDto;
 import uz.agrobank.terminal.enums.TerminalType;
 import uz.agrobank.terminal.service.TerminalService;
 
@@ -24,7 +25,7 @@ public class TerminalServiceImp implements TerminalService {
     private String checkoutFilePath;
 
     @Override
-    public String purchase(Long amount, TerminalType type) {
+    public PurchaseDto purchase(Long amount, TerminalType type) {
         String[] parameters = {"/o1", "/a".concat(String.valueOf(amount)), "/c000"};
 
         List<String> command = new ArrayList<>();
@@ -32,7 +33,7 @@ public class TerminalServiceImp implements TerminalService {
         command.addAll(Arrays.asList(parameters));
 
         execute(command);
-        return extractRRNFromCheckout(type);
+        return new PurchaseDto(extractRRNFromCheckout(type));
     }
 
     @Override
